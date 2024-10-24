@@ -1,4 +1,30 @@
-venv/
-
+# File uploads
 uploads/*
 !uploads/.gitkeep
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+*.egg-info/
+
+# Django specific
+*.sqlite3
+db.sqlite3
+/staticfiles/
+/media/
+
+# Environment variables
+.env
+
+# Editor-specific files
+.vscode/
+.idea/
+
+# MacOS specific files
+.DS_Store
+
