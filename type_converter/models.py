@@ -1,7 +1,7 @@
 class Dataset:
-    def __init__(self, name, content):
+    def __init__(self, name, dataframe):
         self.name = name
-        self.content = content
+        self.dataframe = dataframe
 
     def size(self):
-        return len(self.content)
+        return self.dataframe.shape
