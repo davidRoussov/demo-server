@@ -11,13 +11,17 @@ def upload_file(request):
         return JsonResponse({ 'error': 'No file provided'}, status=400)
 
     file_obj = request.FILES['file']
+    file_name = file_obj.name
 
-    uploaded_dataset = Dataset(name=file_obj.name, content=file_obj.read())
+    if not (file_name.endswith('.csv') or file_name.endswith('.xls') or file_name.endswith('.xlsx')):
+        return JsonResponse({'error': 'Invalid file format. Only CSV and Excel files are allowed.'}, status=400)
+
+    uploaded_dataset = Dataset(name=file_name, content=file_obj.read())
 
     file_size = uploaded_dataset.size()
 
     return JsonResponse({
         'message': 'File uploaded successfully',
-        'file_name': uploaded_dataset.name,
+        'file_name': file_name,
         'file_size': file_size
     }, status=200)
