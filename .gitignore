@@ -1,6 +1,6 @@
-# File uploads
-uploads/*
-!uploads/.gitkeep
+# Datasets
+datasets/*
+!datasets/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 *.pyc
