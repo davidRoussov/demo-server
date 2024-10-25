@@ -36,14 +36,15 @@ def upload_file(request):
             df = pandas.read_excel(file_obj)
 
         uploaded_dataset = Dataset(name=file_name, dataframe=df)
-        logger.info('Successfully processed the file.')
-
+        logger.info('Successfully parsed the file.')
     except Exception as e:
         logger.exception('An error occurred while processing the file: %s', str(e))
         return JsonResponse({'error': f'Invalid file content. Could not process file: {str(e)}'}, status=400)
 
     row_count, column_count = uploaded_dataset.size()
     logger.info('File contains %d rows and %d columns.', row_count, column_count)
+
+    uploaded_dataset.infer_and_convert_data_types()
 
     return JsonResponse({
         'message': 'File uploaded successfully',
