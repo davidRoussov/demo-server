@@ -2,6 +2,7 @@ import logging
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Dataset
+from .services import infer_and_convert_data_types
 import pandas
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ def upload_file(request):
     row_count, column_count = uploaded_dataset.size()
     logger.info('File contains %d rows and %d columns.', row_count, column_count)
 
-    uploaded_dataset.infer_and_convert_data_types()
+    infer_and_convert_data_types(uploaded_dataset)
 
     return JsonResponse({
         'message': 'File uploaded successfully',
