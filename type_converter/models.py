@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 class Dataset:
     def __init__(self, name, dataframe):
@@ -17,6 +18,15 @@ class Dataset:
             if not df_converted.isna().all():
                 df[col] = df_converted
                 continue
+
+            # Attempt to convert to complex numbers
+            try:
+                df_converted = df[col].apply(lambda x: complex(x.replace(' ', '') if isinstance(x, str) else np.nan))
+                if not df_converted.apply(np.isnan).all():
+                    df[col] = df_converted
+                    continue
+            except (ValueError, TypeError):
+                pass
 
             # Attempt to convert to datetime
             try:
