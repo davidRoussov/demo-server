@@ -1,0 +1,14 @@
+category_col_food,category_col_colors,category_col_animals,category_col_countries,category_col_brands,category_col_seasons,string_col,bool_col
+Fruit,Red,Dog,USA,Apple,Spring,Alpha,true
+Meat,Blue,Cat,N/A,Samsung,Summer,Beta,false
+Vegetable,Green,Bird,UK,Toyota,Winter,Gamma,true
+Grain,Yellow,N/A,France,Microsoft,Autumn,Delta,false
+N/A,Black,Fish,Spain,Google,Spring,Epsilon,true
+Dairy,Orange,Lion,Canada,Amazon,Summer,Zeta,false
+Seafood,Purple,Tiger,Japan,Intel,Winter,Eta,true
+Sweets,White,Elephant,Brazil,Sony,Autumn,Theta,false
+Beverage,Gray,Monkey,India,N/A,Spring,Iota,true
+Spice,Teal,Deer,Germany,Dell,Summer,Kappa,false
+Sauce,Magenta,N/A,Australia,HP,Winter,Lambda,true
+Snack,Silver,Cow,Italy,Coca-Cola,Autumn,Mu,false
+

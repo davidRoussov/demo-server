@@ -1,0 +1,14 @@
+complex_col_algebraic,complex_col_trigonometric,complex_col_exponential,absolute_value,complex_col_cartesian,string_col,bool_col
+5+3j,3cis(59.04°),7.81e^(0.54j),7.81,5+3i,Alpha,true
+-2-4j,4cis(116.57°),4.47e^(-2.03j),4.47,-2-4i,Beta,false
+0.5+0j,0.5cis(0°),0.5e^(0j),0.5,0.5+0i,Gamma,true
+-1j,cis(-90°),1e^(-1.57j),1,0-1i,Delta,false
+2.718+0j,e^0,e^(1j),2.718,2.718+0i,Epsilon,true
+3j,cis(90°),3e^(1.57j),3,0+3i,Zeta,false
+N/A,1cis(180°),1e^(3.14j),1,-1+0i,Eta,true
+4-4j,5.66cis(-45°),N/A,5.66,4-4i,Theta,false
+6+8j,10cis(53.13°),10e^(0.93j),10,6+8i,Iota,true
+N/A,0cis(0°),0e^(0j),0,0+0i,Kappa,false
+3-2j,3.61cis(-33.69°),3.61e^(-0.59j),3.61,3-2i,Lambda,true
+-0.707+0.707j,sqrt(2)cis(135°),1e^(2.36j),1,-0.707+0.707i,Mu,false
+

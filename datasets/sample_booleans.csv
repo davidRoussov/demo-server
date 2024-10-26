@@ -1,0 +1,14 @@
+bool_col_tf,bool_col_numeric,bool_col_yesno,bool_col_onoff,bool_col_tf_short,bool_col_enable,string_col,date_col
+true,1,Yes,On,T,Enabled,Alpha,2023-01-05
+false,0,No,Off,F,Disabled,Beta,2023-02-10
+true,1,Yes,On,T,Enabled,Gamma,2023-03-15
+false,0,N/A,Off,F,Disabled,Delta,2023-04-20
+true,1,Yes,N/A,T,Enabled,Epsilon,2023-05-25
+false,N/A,No,Off,F,N/A,Zeta,2023-06-30
+true,1,Yes,On,T,Enabled,Eta,2023-07-05
+N/A,0,No,Off,F,Disabled,Theta,2023-08-10
+true,1,Yes,On,T,Enabled,Iota,2023-09-15
+false,N/A,No,Off,F,Disabled,Kappa,2023-10-20
+true,1,Yes,On,N/A,Enabled,Lambda,2023-11-25
+false,0,No,Off,F,Disabled,Mu,2023-12-30
+
