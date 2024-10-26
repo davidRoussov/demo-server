@@ -1,3 +1,7 @@
+# large datasets
+datasets/business-financial-data-june-2024-quarter-csv.csv
+datasets/customers-2000000.csv
+
 # Byte-compiled / optimized / DLL files
 *.pyc
 *.pyo
