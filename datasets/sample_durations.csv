@@ -1,0 +1,12 @@
+duration_seconds,duration_minutes,duration_hours,duration_days,duration_weeks,duration_months,duration_years,combined_duration,string_col,bool_col
+3 seconds,N/A,unknown,0.001 days,0.0001 weeks,unknown,0.00001 years,3 seconds,Alpha,true
+unknown,33 minutes,0.55 hours,0.023 days,0.0033 weeks,N/A,0.0063 years,33 minutes,Beta,false
+45 seconds,unknown,0.75 hours,0.031 days,0.0045 weeks,unknown,0.000125 years,45 seconds,Gamma,unknown
+unknown,1.5 minutes,N/A,0.062 days,0.0089 weeks,0.002 months,unknown,1.5 minutes,Delta,false
+3600 seconds,N/A,1 hour,0.0417 days,unknown,unknown,0.00011 years,1 hour,Epsilon,true
+unknown,90 minutes,1.5 hours,0.0625 days,0.0089 weeks,0.002 months,unknown,1.5 hours,Zeta,false
+75 seconds,N/A,1.25 hours,unknown,0.0053 weeks,0.0013 months,0.00011 years,1.25 hours,Theta,true
+unknown,unknown,12 hours,0.5 days,0.0714 weeks,0.0167 months,unknown,12 hours,Iota,false
+100000 seconds,unknown,27.78 hours,1.16 days,N/A,0.038 months,N/A,error,Kappa,true
+7270 seconds,N/A,2.02 hours,0.0843 days,0.012 weeks,N/A,0.00023 years,2.02 hours,Lambda,false
+unknown,3000 minutes,N/A,2.083 days,0.2976 weeks,0.069 months,unknown,3000 minutes,Mu,true

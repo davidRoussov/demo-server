@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +13,55 @@ KNOWN_ERRONEOUS_ENTRIES = {'Not Available', 'unknown'}
 BOOLEAN_ALIASES_TRUE = {'yes', 't', 'enabled', 'on', 'true'}
 BOOLEAN_ALIASES_FALSE = {'no', 'f', 'disabled', 'off', 'false'}
 
+KNOWN_DURATIONS = {
+    "second": 1,
+    "seconds": 1,
+    "minute": 60,
+    "minutes": 60,
+    "hour": 3600,
+    "hours": 3600,
+    "day": 86400,
+    "days": 86400,
+    "week": 604800,
+    "weeks": 604800,
+    "month": 2592000,
+    "months": 2592000,
+    "year": 31536000,
+    "years": 31536000
+}
+
 def clean_series(series):
     return series[~series.isin(KNOWN_ERRONEOUS_ENTRIES)].dropna()
 
-def infer_complex_column(series):
+def infer_duration_series(series):
+    def to_timedelta(val):
+        if isinstance(val, pd.Timedelta):
+            return val
+        if isinstance(val, str):
+            match = re.match(r"(\d+\.?\d*)\s*(\w+)", val.strip().lower())
+            if match:
+                num, unit = match.groups()
+                num = float(num)
+
+                if unit in KNOWN_DURATIONS:
+                    total_seconds = num * KNOWN_DURATIONS[unit]
+                    try:
+                        return pd.to_timedelta(total_seconds, unit='seconds')
+                    except (ValueError, OverflowError):
+                        pass
+        return pd.NaT
+
+    try:
+        series_converted = series.apply(to_timedelta)
+
+        if not series_converted.isna().all():
+            return series_converted
+    except Exception:
+        pass
+
+    return None
+
+def infer_complex_series(series):
     try:
         df_converted = series.apply(lambda x: complex(x.replace(' ', '') if isinstance(x, str) else np.nan))
         if not df_converted.apply(np.isnan).all():
@@ -25,7 +71,7 @@ def infer_complex_column(series):
 
     return None
 
-def infer_datetime_column(series):
+def infer_datetime_series(series):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", UserWarning)
 
@@ -58,7 +104,7 @@ def infer_datetime_column(series):
 
     return None
 
-def infer_boolean_column(series):
+def infer_boolean_series(series):
     def to_bool(val):
         if isinstance(val, bool):
             return val
@@ -82,16 +128,21 @@ def infer_boolean_column(series):
 
     return None
 
-def infer_column(df, col):
+def infer_series(df, col):
     series = clean_series(df[col])
 
+    # Attempt to convert to duration
+    df_converted = infer_duration_series(series)
+    if df_converted is not None:
+        return col, df_converted.reindex(df.index)
+
     # Attempt to convert to boolean
-    df_converted = infer_boolean_column(series)
+    df_converted = infer_boolean_series(series)
     if df_converted is not None:
         return col, df_converted.reindex(df.index)
 
     # Attempt to convert to datetime
-    df_converted = infer_datetime_column(series)
+    df_converted = infer_datetime_series(series)
     if df_converted is not None:
         return col, df_converted.reindex(df.index)
 
@@ -101,7 +152,7 @@ def infer_column(df, col):
         return col, df_converted.reindex(df.index)
 
     # Attempt to convert to complex numbers
-    df_converted = infer_complex_column(series)
+    df_converted = infer_complex_series(series)
     if df_converted is not None:
         return col, df_converted.reindex(df.index)
 
@@ -127,7 +178,7 @@ def infer_and_convert_data_types(dataset):
             if col in type_hints_dict:
                 logger.info('no-op')
             else:
-                future_to_col[executor.submit(infer_column, df, col)] = col
+                future_to_col[executor.submit(infer_series, df, col)] = col
 
         for future in future_to_col:
             col, converted_col = future.result()
