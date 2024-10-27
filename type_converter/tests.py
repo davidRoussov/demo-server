@@ -25,7 +25,15 @@ class InferenceTests(TestCase):
     def test_dates(self):
         dataframe = pandas.read_csv('./datasets/sample_dates.csv')
         dataset = Dataset(name="sample_data", dataframe=dataframe)
-        infer_and_convert_data_types(dataset)
+        dtypes = infer_and_convert_data_types(dataset)
+        self.assertEqual(dtypes['date_col_ymd'], 'datetime64[ns]')
+        self.assertEqual(dtypes['date_col_dmy'], 'datetime64[ns]')
+        self.assertEqual(dtypes['date_col_mdy'], 'datetime64[ns]')
+        #self.assertEqual(dtypes['date_col_iso'], 'datetime64[ns]')
+        self.assertEqual(dtypes['date_col_full'], 'datetime64[ns]')
+        self.assertEqual(dtypes['date_col_short'], 'datetime64[ns]')
+        self.assertEqual(dtypes['epoch_seconds'], 'datetime64[ns]')
+        self.assertEqual(dtypes['epoch_milliseconds'], 'datetime64[ns]')
     def test_categorical(self):
         dataframe = pandas.read_csv('./datasets/sample_categorical.csv')
         dataset = Dataset(name="sample_data", dataframe=dataframe)
