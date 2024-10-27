@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
 fi
 
 FILE_PATH="$1"
-URL="http://localhost:8000/typeconverter/uploads/"
+URL="http://localhost:8000/type-detector/inferences/"
 
 curl -X POST "$URL" \
   -F "file=@${FILE_PATH}" \

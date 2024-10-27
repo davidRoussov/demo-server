@@ -1,6 +1,8 @@
 import logging
+import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from .models import Dataset
 from .services import infer_and_convert_data_types
 import pandas
@@ -8,17 +10,26 @@ import pandas
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
-def upload_file(request):
-    logger.debug('In upload_file')
+@require_POST
+def infer_file(request):
+    logger.debug('In infer_file')
     logger.debug('Request method: %s', request.method)
-
-    if request.method != 'POST':
-        logger.warning('Non-POST request methods are not allowed')
-        return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
 
     if 'file' not in request.FILES:
         logger.error('No file provided in request')
         return JsonResponse({ 'error': 'No file provided'}, status=400)
+    
+    # Processing any user-defined type mappings
+    maybe_mapping = request.POST.get('mappings')
+    if maybe_mapping is None:
+        logger.info('Did not receive any type mappings')
+    else:
+        try:
+            mappings = json.loads(maybe_mapping)
+            mappings = [item for item in mappings if item[1] is not None]
+            logger.info(f"Received {len(mappings)} type mappings")
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
     file_obj = request.FILES['file']
     file_name = file_obj.name
@@ -36,7 +47,7 @@ def upload_file(request):
         else:
             df = pandas.read_excel(file_obj)
 
-        uploaded_dataset = Dataset(name=file_name, dataframe=df)
+        uploaded_dataset = Dataset(name=file_name, dataframe=df, type_hints=mappings)
         logger.info('Successfully parsed the file.')
     except Exception as e:
         logger.exception('An error occurred while processing the file: %s', str(e))
@@ -45,13 +56,15 @@ def upload_file(request):
     row_count, column_count = uploaded_dataset.size()
     logger.info('File contains %d rows and %d columns.', row_count, column_count)
 
-    infer_and_convert_data_types(uploaded_dataset)
+    dtypes = infer_and_convert_data_types(uploaded_dataset)
+    dtypes_dict = {col: str(dtype) for col, dtype in df.dtypes.items()}
 
     return JsonResponse({
         'message': 'File uploaded successfully',
         'file_name': file_name,
         'rows': row_count,
-        'columns': column_count
+        'columns': column_count,
+        'types': dtypes_dict
     }, status=200)
 
 def list_types(request):
@@ -71,10 +84,10 @@ def list_types(request):
         {"id": 6, "name": "float64"},
         {"id": 7, "name": "float32"},
         {"id": 8, "name": "bool"},
-        {"id": 9, "name": "datetime64"},
+        {"id": 9, "name": "datetime64[ns]"},
         {"id": 10, "name": "timedelta"},
         {"id": 11, "name": "category"},
-        {"id": 12, "name": "complex"},
+        {"id": 12, "name": "complex128"},
     ]
 
     return JsonResponse(data_types, status=200, safe=False)

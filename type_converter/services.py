@@ -118,8 +118,17 @@ def infer_and_convert_data_types(dataset):
     print("\nData types before inference:")
     print(df.dtypes)
 
+    type_hints_dict = {col: dtype for col, dtype in dataset.type_hints}
+    print(f"type_hints_dict: {type_hints_dict}")
+
     with ThreadPoolExecutor() as executor:
-        future_to_col = {executor.submit(infer_column, df, col): col for col in df.columns}
+        future_to_col = {}
+        for col in df.columns:
+            if col in type_hints_dict:
+                logger.info('no-op')
+            else:
+                future_to_col[executor.submit(infer_column, df, col)] = col
+
         for future in future_to_col:
             col, converted_col = future.result()
             df[col] = converted_col

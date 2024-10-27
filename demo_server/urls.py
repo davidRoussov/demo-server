@@ -19,5 +19,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("typeconverter/", include("type_converter.urls"))
+    path("type-detector/", include("type_converter.urls"))
 ]
