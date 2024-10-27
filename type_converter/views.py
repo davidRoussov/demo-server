@@ -53,3 +53,28 @@ def upload_file(request):
         'rows': row_count,
         'columns': column_count
     }, status=200)
+
+def list_types(request):
+    logger.debug('In list_types')
+    logger.debug('Request method: %s', request.method)
+
+    if request.method != 'GET':
+        logger.warning('Non-GET request methods are not allowed')
+        return JsonResponse({'error': 'Only GET requests are allowed'}, status=405)
+
+    data_types = [
+        {"id": 1, "name": "object"},
+        {"id": 2, "name": "int64"},
+        {"id": 3, "name": "int32"},
+        {"id": 4, "name": "int16"},
+        {"id": 5, "name": "int8"},
+        {"id": 6, "name": "float64"},
+        {"id": 7, "name": "float32"},
+        {"id": 8, "name": "bool"},
+        {"id": 9, "name": "datetime64"},
+        {"id": 10, "name": "timedelta"},
+        {"id": 11, "name": "category"},
+        {"id": 12, "name": "complex"},
+    ]
+
+    return JsonResponse(data_types, status=200, safe=False)
