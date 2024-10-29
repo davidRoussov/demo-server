@@ -20,6 +20,7 @@ def infer_file(request):
         return JsonResponse({ 'error': 'No file provided'}, status=400)
     
     # Processing any user-defined type mappings
+    mappings = []
     maybe_mapping = request.POST.get('mappings')
     if maybe_mapping is None:
         logger.info('Did not receive any type mappings')
