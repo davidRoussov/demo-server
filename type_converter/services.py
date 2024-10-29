@@ -33,6 +33,34 @@ KNOWN_DURATIONS = {
 def clean_series(series):
     return series[~series.isin(KNOWN_ERRONEOUS_ENTRIES)].dropna()
 
+def infer_numeric_series(series):
+    df_converted = pd.to_numeric(series, errors='coerce')
+    if not df_converted.isna().all():
+        max_value = df_converted.max()
+        min_value = df_converted.min()
+
+        is_decimal = (df_converted % 1 != 0).any()
+
+        if is_decimal:
+            if df_converted.abs().max() <= 3.4e38:
+                return df_converted.astype('float32')
+            else:
+                return df_converted.astype('float64')
+        else:
+            if min_value >= -128 and max_value <= 127:
+                return df_converted.astype('int8')
+            elif min_value >= -32768 and max_value <= 32767:
+                return df_converted.astype('int16')
+            elif min_value >= -2147483648 and max_value <= 2147483647:
+                return df_converted.astype('int32')
+            elif min_value >= -9223372036854775808 and max_value <= 9223372036854775807:
+                return df_converted.astype('int64')
+            else:
+                # If the range is outside standard int64 bounds, use float
+                return df_converted.astype('float64')
+
+    return None
+
 def infer_duration_series(series):
     def to_timedelta(val):
         if isinstance(val, pd.Timedelta):
@@ -152,9 +180,9 @@ def infer_series(df, col):
         logger.info("Column '%s' inferred as 'datetime'", col)
         return col, df_converted.reindex(df.index)
 
-    # Attempt to convert to numeric first
-    df_converted = pd.to_numeric(series, errors='coerce')
-    if not df_converted.isna().all():
+    # Attempt to convert to a numeric series
+    df_converted = infer_numeric_series(series)
+    if df_converted is not None:
         logger.info("Column '%s' inferred as 'numeric'", col)
         return col, df_converted.reindex(df.index)
 
