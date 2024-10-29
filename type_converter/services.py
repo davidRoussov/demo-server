@@ -129,38 +129,49 @@ def infer_boolean_series(series):
     return None
 
 def infer_series(df, col):
+    logger.debug("Starting type inference for column '%s'", col)
+
     series = clean_series(df[col])
+    logger.debug("Cleaned series for column '%s'", col)
 
     # Attempt to convert to duration
     df_converted = infer_duration_series(series)
     if df_converted is not None:
+        logger.info("Column '%s' inferred as 'duration'", col)
         return col, df_converted.reindex(df.index)
 
     # Attempt to convert to boolean
     df_converted = infer_boolean_series(series)
     if df_converted is not None:
+        logger.info("Column '%s' inferred as 'boolean'", col)
         return col, df_converted.reindex(df.index)
 
     # Attempt to convert to datetime
     df_converted = infer_datetime_series(series)
     if df_converted is not None:
+        logger.info("Column '%s' inferred as 'datetime'", col)
         return col, df_converted.reindex(df.index)
 
     # Attempt to convert to numeric first
     df_converted = pd.to_numeric(series, errors='coerce')
     if not df_converted.isna().all():
+        logger.info("Column '%s' inferred as 'numeric'", col)
         return col, df_converted.reindex(df.index)
 
     # Attempt to convert to complex numbers
     df_converted = infer_complex_series(series)
     if df_converted is not None:
+        logger.info("Column '%s' inferred as 'complex'", col)
         return col, df_converted.reindex(df.index)
 
     # Check if the column should be categorical
-    if len(series.unique()) / len(series) < 0.5:
+    unique_ratio = len(series.unique()) / len(series)
+    if unique_ratio < 0.5:
+        logger.info("Column '%s' inferred as 'categorical'", col)
         categorical_series = pd.Series(pd.Categorical(series), index=series.index)
         return col, categorical_series.reindex(df.index)
 
+    logger.info("Column '%s' remains as 'object'", col)
     return col, series.reindex(df.index)
 
 def convert_column_type(series, type_hint):
@@ -196,25 +207,27 @@ def convert_column_type(series, type_hint):
 def infer_and_convert_data_types(dataset):
     df = dataset.dataframe
 
-    print("\nData types before inference:")
-    print(df.dtypes)
+    logger.info("Data types before inference:\n%s", df.dtypes)
 
     type_hints_dict = {col: dtype for col, dtype in dataset.type_hints}
-    print(f"type_hints_dict: {type_hints_dict}")
+    logger.debug("Type hints dict: %s", type_hints_dict)
 
     with ThreadPoolExecutor() as executor:
         future_to_col = {}
         for col in df.columns:
             if col in type_hints_dict:
+                logger.debug("Converting column '%s' to '%s'", col, type_hints_dict[col])
                 df[col] = convert_column_type(df[col], type_hints_dict[col])
             else:
+                logger.debug("Inferring type for column '%s'", col)
                 future_to_col[executor.submit(infer_series, df, col)] = col
 
         for future in future_to_col:
             col, converted_col = future.result()
+            logger.debug("Completed inference for column '%s'", col)
             df[col] = converted_col
 
-    print("\nData types after inference:")
-    print(df.dtypes)
+    logger.info("Data types after inference:\n%s", df.dtypes)
 
     return df.dtypes
+

@@ -76,18 +76,18 @@ def list_types(request):
         return JsonResponse({'error': 'Only GET requests are allowed'}, status=405)
 
     data_types = [
-        {"id": 1, "name": "object"},
-        {"id": 2, "name": "int64"},
-        {"id": 3, "name": "int32"},
-        {"id": 4, "name": "int16"},
-        {"id": 5, "name": "int8"},
-        {"id": 6, "name": "float64"},
-        {"id": 7, "name": "float32"},
-        {"id": 8, "name": "bool"},
-        {"id": 9, "name": "datetime64[ns]"},
-        {"id": 10, "name": "timedelta"},
-        {"id": 11, "name": "category"},
-        {"id": 12, "name": "complex128"},
+        {"id": 1, "name": "object", "display_name": "Text"},
+        {"id": 2, "name": "int64", "display_name": "Integer (64-bit)"},
+        {"id": 3, "name": "int32", "display_name": "Integer (32-bit)"},
+        {"id": 4, "name": "int16", "display_name": "Integer (16-bit)"},
+        {"id": 5, "name": "int8", "display_name": "Integer (8-bit)"},
+        {"id": 6, "name": "float64", "display_name": "Float (64-bit)"},
+        {"id": 7, "name": "float32", "display_name": "Float (32-bit)"},
+        {"id": 8, "name": "bool", "display_name": "Boolean"},
+        {"id": 9, "name": "datetime64[ns]", "display_name": "Datetime"},
+        {"id": 10, "name": "timedelta", "display_name": "Timedelta"},
+        {"id": 11, "name": "category", "display_name": "Category"},
+        {"id": 12, "name": "complex128", "display_name": "Complex (128-bit)"},
     ]
 
     return JsonResponse(data_types, status=200, safe=False)
