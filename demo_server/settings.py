@@ -54,6 +54,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://david-roussov-demo.s3-website-ap-southeast-2.amazonaws.com"
 ]
 
 ROOT_URLCONF = "demo_server.urls"
