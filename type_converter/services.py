@@ -203,34 +203,33 @@ def infer_series(df, col):
     return col, series.reindex(df.index)
 
 def convert_column_type(series, type_hint):
-    match type_hint:
-        case "object":
-            return series.astype('object')
-        case "int64":
-            return series.astype('int64')
-        case "int32":
-            return series.astype('int32')
-        case "int16":
-            return series.astype('int16')
-        case "int8":
-            return series.astype('int8')
-        case "float64":
-            return series.astype('float64')
-        case "float32":
-            return series.astype('float32')
-        case "bool":
-            return series.astype('bool')
-        case "datetime64[ns]":
-            return pd.to_datetime(series, errors='coerce')
-        case "timedelta":
-            return pd.to_timedelta(series, errors='coerce')
-        case "category":
-            return series.astype('category')
-        case "complex128":
-            return series.astype('complex128')
-        case _:
-            logger.info(f"Unexpected type hint: {type_hint}")
-            return series
+    if type_hint == "object":
+        return series.astype('object')
+    elif type_hint == "int64":
+        return series.astype('int64')
+    elif type_hint == "int32":
+        return series.astype('int32')
+    elif type_hint == "int16":
+        return series.astype('int16')
+    elif type_hint == "int8":
+        return series.astype('int8')
+    elif type_hint == "float64":
+        return series.astype('float64')
+    elif type_hint == "float32":
+        return series.astype('float32')
+    elif type_hint == "bool":
+        return series.astype('bool')
+    elif type_hint == "datetime64[ns]":
+        return pd.to_datetime(series, errors='coerce')
+    elif type_hint == "timedelta":
+        return pd.to_timedelta(series, errors='coerce')
+    elif type_hint == "category":
+        return series.astype('category')
+    elif type_hint == "complex128":
+        return series.astype('complex128')
+    else:
+        logger.info(f"Unexpected type hint: {type_hint}")
+        return series
 
 def infer_and_convert_data_types(dataset):
     df = dataset.dataframe
