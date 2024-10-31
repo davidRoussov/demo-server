@@ -34,14 +34,6 @@ class InferenceTests(TestCase):
         self.assertEqual(dtypes['date_col_short'], 'datetime64[ns]')
         self.assertEqual(dtypes['epoch_seconds'], 'datetime64[ns]')
         self.assertEqual(dtypes['epoch_milliseconds'], 'datetime64[ns]')
-    def test_categorical(self):
-        dataframe = pandas.read_csv('./datasets/sample_categorical.csv')
-        dataset = Dataset(name="sample_data", dataframe=dataframe, type_hints=[])
-        infer_and_convert_data_types(dataset)
-    def test_complex(self):
-        dataframe = pandas.read_csv('./datasets/sample_complex.csv')
-        dataset = Dataset(name="sample_data", dataframe=dataframe, type_hints=[])
-        infer_and_convert_data_types(dataset)
     def test_duration(self):
         dataframe = pandas.read_csv('./datasets/sample_durations.csv')
         dataset = Dataset(name="sample_data", dataframe=dataframe, type_hints=[])
@@ -62,3 +54,13 @@ class InferenceTests(TestCase):
         self.assertEqual(dtypes['int32_col'], 'int32')
         self.assertEqual(dtypes['int16_col'], 'int16')
         self.assertEqual(dtypes['int8_col'], 'int8')
+    def test_categorical(self):
+        dataframe = pandas.read_csv('./datasets/sample_categorical.csv')
+        dataset = Dataset(name="sample_data", dataframe=dataframe, type_hints=[])
+        dtypes = infer_and_convert_data_types(dataset)
+        self.assertEqual(dtypes['category_col_seasons'], 'category')
+    def test_complex(self):
+        dataframe = pandas.read_csv('./datasets/sample_complex.csv')
+        dataset = Dataset(name="sample_data", dataframe=dataframe, type_hints=[])
+        dtypes = infer_and_convert_data_types(dataset)
+        self.assertEqual(dtypes['complex_col_algebraic'], 'complex128')
