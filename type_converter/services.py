@@ -206,11 +206,12 @@ def infer_series(df, col):
         return col, df_converted.reindex(df.index)
 
     # Check if the column should be categorical
-    unique_ratio = len(series.unique()) / len(series)
-    if unique_ratio < 0.5:
-        logger.info("Column '%s' inferred as 'categorical'", col)
-        categorical_series = pd.Series(pd.Categorical(series), index=series.index)
-        return col, categorical_series.reindex(df.index)
+    if len(series) != 0:
+        unique_ratio = len(series.unique()) / len(series)
+        if unique_ratio < 0.5:
+            logger.info("Column '%s' inferred as 'categorical'", col)
+            categorical_series = pd.Series(pd.Categorical(series), index=series.index)
+            return col, categorical_series.reindex(df.index)
 
     logger.info("Column '%s' remains as 'object'", col)
     return col, series.reindex(df.index)
