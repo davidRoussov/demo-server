@@ -8,7 +8,7 @@ import re
 logger = logging.getLogger(__name__)
 
 # Any values we know we can exclude from inference
-KNOWN_ERRONEOUS_ENTRIES = {'Not Available', 'unknown'}
+KNOWN_ERRONEOUS_ENTRIES = {'Not Available', 'unknown', 'N/A'}
 
 BOOLEAN_ALIASES_TRUE = {'yes', 't', 'enabled', 'on', 'true'}
 BOOLEAN_ALIASES_FALSE = {'no', 'f', 'disabled', 'off', 'false'}
@@ -123,13 +123,13 @@ def infer_datetime_series(series):
         clean_series = numeric_series.dropna()
         if len(clean_series) > 0:
             if (clean_series == clean_series.astype(int)).all() and (clean_series > 0).all():
-                string_series = clean_series.astype(str)
-                if all(string_series.str.replace('.0', '').str.len() == 13):
+                string_series = clean_series.astype(str).str.replace('.0$', '', regex=True)
+                if all(string_series.str.len() == 13):
                     logger.info("Detected epoch milliseconds series")
-                    return pd.to_datetime(clean_series, unit='ms', errors='coerce')
-                elif all(string_series.str.replace('.0', '').str.len() == 10):
+                    return pd.to_datetime(clean_series, unit='ms', errors='coerce').dt.tz_localize(None)
+                elif all(string_series.str.len() == 10):
                     logger.info("Detected epoch seconds series")
-                    return pd.to_datetime(clean_series, unit='s', errors='coerce')
+                    return pd.to_datetime(clean_series, unit='s', errors='coerce').dt.tz_localize(None)
                 else:
                     return None
             else:
@@ -139,7 +139,7 @@ def infer_datetime_series(series):
             df_converted = pd.to_datetime(series, errors='coerce')
 
             if not df_converted.isna().all():
-                return df_converted
+                return df_converted.dt.tz_localize(None)
         except Exception as e:
             pass
 
