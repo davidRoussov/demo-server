@@ -7,7 +7,11 @@ class InferenceTests(TestCase):
     def test_floats(self):
         dataframe = pandas.read_csv('./datasets/sample_floats.csv')
         dataset = Dataset(name="sample_data", dataframe=dataframe, type_hints=[])
-        infer_and_convert_data_types(dataset)
+        dtypes = infer_and_convert_data_types(dataset)
+        self.assertEqual(dtypes['float64_col'], 'float64')
+        self.assertEqual(dtypes['float32_col'], 'float32')
+        self.assertEqual(dtypes['float64_col_2'], 'float64')
+        self.assertEqual(dtypes['float32_col_2'], 'float32')
     def test_booleans(self):
         dataframe = pandas.read_csv('./datasets/sample_booleans.csv')
         dataset = Dataset(name="sample_data", dataframe=dataframe, type_hints=[])
@@ -25,7 +29,7 @@ class InferenceTests(TestCase):
         self.assertEqual(dtypes['date_col_ymd'], 'datetime64[ns]')
         self.assertEqual(dtypes['date_col_dmy'], 'datetime64[ns]')
         self.assertEqual(dtypes['date_col_mdy'], 'datetime64[ns]')
-        #self.assertEqual(dtypes['date_col_iso'], 'datetime64[ns]')
+        self.assertEqual(dtypes['date_col_iso'], 'datetime64[ns]')
         self.assertEqual(dtypes['date_col_full'], 'datetime64[ns]')
         self.assertEqual(dtypes['date_col_short'], 'datetime64[ns]')
         self.assertEqual(dtypes['epoch_seconds'], 'datetime64[ns]')

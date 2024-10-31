@@ -30,6 +30,20 @@ KNOWN_DURATIONS = {
     "years": 31536000
 }
 
+# Constants for integer limits
+INT8_MIN = np.iinfo(np.int8).min
+INT8_MAX = np.iinfo(np.int8).max
+INT16_MIN = np.iinfo(np.int16).min
+INT16_MAX = np.iinfo(np.int16).max
+INT32_MIN = np.iinfo(np.int32).min
+INT32_MAX = np.iinfo(np.int32).max
+INT64_MIN = np.iinfo(np.int64).min
+INT64_MAX = np.iinfo(np.int64).max
+
+# Constants for float limits
+FLOAT32_MAX = np.finfo(np.float32).max
+FLOAT64_MAX = np.finfo(np.float64).max
+
 def clean_series(series):
     return series[~series.isin(KNOWN_ERRONEOUS_ENTRIES)].dropna()
 
@@ -42,21 +56,20 @@ def infer_numeric_series(series):
         is_decimal = (df_converted % 1 != 0).any()
 
         if is_decimal:
-            if df_converted.abs().max() <= 3.4e38:
+            if df_converted.abs().max() <= FLOAT32_MAX:
                 return df_converted.astype('float32')
             else:
                 return df_converted.astype('float64')
         else:
-            if min_value >= -128 and max_value <= 127:
+            if INT8_MIN <= min_value <= INT8_MAX and max_value <= INT8_MAX:
                 return df_converted.astype('int8')
-            elif min_value >= -32768 and max_value <= 32767:
+            elif INT16_MIN <= min_value <= INT16_MAX and max_value <= INT16_MAX:
                 return df_converted.astype('int16')
-            elif min_value >= -2147483648 and max_value <= 2147483647:
+            elif INT32_MIN <= min_value <= INT32_MAX and max_value <= INT32_MAX:
                 return df_converted.astype('int32')
-            elif min_value >= -9223372036854775808 and max_value <= 9223372036854775807:
+            elif INT64_MIN <= min_value <= INT64_MAX and max_value <= INT64_MAX:
                 return df_converted.astype('int64')
             else:
-                # If the range is outside standard int64 bounds, use float
                 return df_converted.astype('float64')
 
     return None
@@ -257,4 +270,3 @@ def infer_and_convert_data_types(dataset):
     logger.info("Data types after inference:\n%s", df.dtypes)
 
     return df.dtypes
-

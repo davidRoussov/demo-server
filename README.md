@@ -1,7 +1,5 @@
 # Type inference and conversion
 
-## Prerequisites
-
 ## Setup
 
 1. Clone the repository: 
@@ -14,6 +12,7 @@ cd demo_server
 
 ```bash
 python3 -m venv ./venv
+source ./venv/bin/activate
 ```
 
 3. Install dependencies
